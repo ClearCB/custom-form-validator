@@ -8,5 +8,4 @@ export class IndividualPreferences{
     facebook = new InputModel("","","Facebook link", [rules.isCorrectFacebookLink], []);
     twitter = new InputModel("","","Twitter link", [rules.isCorrectTwitterLink], []);
     generalComments = new InputModel("","","General comments", [], []);
-
 }

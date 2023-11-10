@@ -27,6 +27,4 @@ export class InputModel {
         this.validation = validation;
         this.errorMessages = errorMessages;
     }
-
-
 }

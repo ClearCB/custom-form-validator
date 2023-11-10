@@ -9,7 +9,6 @@ import { ValidationRules } from "./validationRules.js";
 export class Functions {
     validationRules = new ValidationRules();
     htmlGenerator = new HtmlGenerator();
-    constants = new Constants();
 
     // ###### PREPARING THE HTML INPUTS ######
 
@@ -76,6 +75,7 @@ export class Functions {
     generateInput(formSection, input, inputId) {
         // Generate the input parts
         this.addNewInputRow(input, inputId);
+        this.getRequiredInputs(input, inputId);
         this.addAdditionalInfoRuleToLabel(formSection, inputId);
         this.addAdditionalInfoTypeToLabel(inputId);
 
@@ -117,7 +117,7 @@ export class Functions {
      */
     addAdditionalInfoRuleToLabel(formSection, inputId) {
         // We get the additional information object
-        const additionalInfoRule = this.constants.ADDITIONAL_INFORMATION_INPUT_RULE;
+        const additionalInfoRule = Constants.ADDITIONAL_INFORMATION_INPUT_RULE;
         // We get the name of the validation rule
         const infoRulesKey = Object.keys(additionalInfoRule);
 
@@ -148,7 +148,7 @@ export class Functions {
      */
     addAdditionalInfoTypeToLabel(inputId) {
         // We get the additional information object
-        const additionalInfoType = this.constants.ADDITIONAL_INFORMATION_INPUT_TYPE;
+        const additionalInfoType = Constants.ADDITIONAL_INFORMATION_INPUT_TYPE;
         // We get the name of the validation rule
         const infoRulesKey = Object.keys(additionalInfoType);
 
@@ -165,6 +165,25 @@ export class Functions {
                 this.getLabelInput(inputId).innerHTML += info;
             })
         }
+    }
+
+
+    /**
+     * This function will get the required inputs
+     * checking if the rule "mustBeFilled" is present in their 
+     * validation rules
+     */
+    getRequiredInputs(input, inputId) {
+
+        let validationRules = input["validation"];
+        // We iterate for our section
+        let isRequired = validationRules.some((validation) => validation.name == "mustBeFilled")
+
+        if (isRequired) {
+
+            Constants.REQUIRED_INPUTS.push(inputId);
+        }
+
     }
 
     // ###### END OF: PREPARING THE HTML INPUTS ######
@@ -277,7 +296,7 @@ export class Functions {
     validateInput(form, sectionId, inputId) {
         this.getInputValue(form, sectionId, inputId);
         let isValid = this.isValidInput(form, sectionId, inputId);
-        this.checkIfMessageDisplayInput(isValid, form, inputId);
+        this.checkIfMessageDisplayInput(isValid, form, sectionId, inputId);
     }
 
     /**
@@ -287,6 +306,7 @@ export class Functions {
         let input = this.getInput(form, sectionId, inputId);
 
         let inputValue = input["value"];
+        input["valueValidation"] = "";
 
         // If the input is the password, we keep case, since we want to check
         // if a upper case is present.
@@ -298,7 +318,7 @@ export class Functions {
             input["valueValidation"] = input["value"].toUpperCase();
         }
 
-        return this.validationRules.validate(input);
+        return this.validationRules.validate(input, inputId);
     }
 
     // ###### END OF: VALIDATIONS ######
@@ -306,10 +326,19 @@ export class Functions {
     // ###### MESSAGE DISPLAY ######
 
     /**
+     * This function will display all the error messages that an input value contain
+     */
+    displayValidationMessageInput(formValues, sectionId, inputId) {
+
+        this.addErrorMessageToInputElement(formValues, sectionId, inputId);
+    }
+
+
+    /**
      * This function will iterate from the FormModel and will 
      * display all the error messages that the form values contain
      */
-    displayValidationMessageInput(formValues) {
+    displayValidationMessageForm(formValues) {
 
         for (const sectionId in formValues) {
 
@@ -318,19 +347,58 @@ export class Functions {
 
                 if (inputId === "title") continue;
 
-                this.addErrorMessageToInputElement(section, inputId);
+                this.addErrorMessageToInputElement(formValues, sectionId, inputId);
             }
         }
 
     }
 
     /**
+     * This function will iterate from the FormModel and will 
+     * display addittional extra information.
+     */
+    displayExtraInfo(formValues) {
+
+        for (const sectionId in formValues) {
+
+            let section = formValues[sectionId];
+            for (const inputId in section) {
+
+                // We check the inputId if we have something to display.
+                switch (inputId) {
+                    case "color":
+                        this.displayColor(formValues, sectionId, inputId);
+                        break;
+                    default:
+                        break;
+                }
+
+            }
+        }
+
+    }
+
+    /**
+     * We display the input color with the value of the color provided
+     */
+    displayColor(formValues, sectionId, inputId) {
+
+        let colorValue = this.getInput(formValues, sectionId, inputId).value;
+
+        if (colorValue) {
+
+            let validationElement = this.getValidationElement(inputId);
+            validationElement.innerHTML = this.htmlGenerator.addNewColorInput(colorValue);
+        }
+    }
+
+    /**
      * This generate a new header for a section
      */
-    addErrorMessageToInputElement(section, inputId) {
+    addErrorMessageToInputElement(formValues, sectionId, inputId) {
         // We take the validation element and the error messages 
         let inputValidationElement = this.getValidationElement(inputId);
-        let errorMessages = section[inputId]["errorMessages"];
+        let errorMessages = formValues[sectionId][inputId]["errorMessages"];
 
         let errorValidationResult = "";
 
@@ -339,7 +407,7 @@ export class Functions {
 
             errorValidationResult += this.htmlGenerator.addNewErrorRow(error);
         });
-        
+
         inputValidationElement.innerHTML = errorValidationResult;
     }
 
@@ -361,6 +429,14 @@ export class Functions {
     }
 
     /**
+     * We hide the form values table
+     */
+    hideTableDataInformation() {
+        let tableDataContent = document.getElementById("mainTableData");
+        tableDataContent.innerHTML = "";
+    }
+
+    /**
      * This generate a new header for a section
      */
     openTableInformation() {
@@ -379,6 +455,8 @@ export class Functions {
         let inputValue = input["value"];
         let labelName = input["labelName"];
 
+        if (inputId == "color" && this.validationRules.isFilled(inputValue)) inputValue = this.htmlGenerator.addNewColorInput(inputValue);
+
         newTableRow = document.createElement("tr");
         newTableRow.innerHTML = this.htmlGenerator.generateTableRow(labelName, inputValue);
 
@@ -393,8 +471,11 @@ export class Functions {
     checkIfMessageDisplayForm(isValidValue, form) {
         if (isValidValue) {
             this.printFormData(form);
+            this.deleteErrorMessagesForm(form);
+            this.displayExtraInfo(form);
         } else {
-            this.displayValidationMessageInput(form);
+            this.hideTableDataInformation();
+            this.displayValidationMessageForm(form);
         }
     }
 
@@ -403,11 +484,12 @@ export class Functions {
      * if its valid we delete error messages
      * if not, we display errors
      */
-    checkIfMessageDisplayInput(isValidValue, form, inputId) {
+    checkIfMessageDisplayInput(isValidValue, form, sectionId, inputId) {
         if (isValidValue) {
             this.deleteErrorMessages(inputId);
+            this.displayExtraInfo(form);
         } else {
-            this.displayValidationMessageInput(form);
+            this.displayValidationMessageInput(form, sectionId, inputId);
         }
     }
 
@@ -418,6 +500,19 @@ export class Functions {
         this.getValidationElement(inputId).innerHTML = "";
     }
 
+
+    /**
+     * We delete all the error messages from an input
+     */
+    deleteErrorMessagesForm(formValues) {
+        for (const sectionId in formValues) {
+            let section = formValues[sectionId];
+            for (const inputId in section) {
+                if (inputId == "title") continue;
+                this.getValidationElement(inputId).innerHTML = "";
+            }
+        }
+    }
     // ###### END OF: MESSAGE DISPLAY ######
 
     // ###### EVENTS ######

@@ -107,4 +107,15 @@ export class HtmlGenerator {
         </table>
         `
     }
+
+    /**
+     * We generate an input color 
+     */
+    addNewColorInput(colorValue) {
+        return `
+        <input type="color" value="${colorValue}" disabled>
+        `
+        // <div class="row mt-2 d-flex justify-content-center align-items-center">
+        // </div>
+    }
 }

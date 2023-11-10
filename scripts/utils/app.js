@@ -13,5 +13,4 @@ export class App {
         // We add the necessary events
         this.functions.prepareEvents(this.form);
     }
-
 } 

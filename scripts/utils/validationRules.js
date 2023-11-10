@@ -1,6 +1,5 @@
 import { Constants } from "./constants.js";
 
-
 /**
  * In this class we store all the validation rules that we
  * want to apply.
@@ -8,28 +7,15 @@ import { Constants } from "./constants.js";
  * To use and check information we use the constant class
  */
 export class ValidationRules {
-    constants = new Constants();
-
-
-
-    /**
-     * Check if the input is required
-     */
-    isRequired(inputId, constants) {
-
-        return constants.REQUIRED_INPUTS.includes(inputId);
-    }
-
-
     /**
      * Check if the value is filled and must be filled.
      */
-    mustBeFilled(value, constants, errorName) {
-        const errorMessage = constants.ERROR_MESSAGES[errorName];
+    mustBeFilled(value, errorName, inputId) {
+        const errorMessage = Constants.ERROR_MESSAGES[errorName];
 
-        if (value == "" ||
+        if ((value == "" ||
             value == null ||
-            value == undefined && constants.REQUIRED_INPUTS.includes(inputId)) {
+            value == undefined) && Constants.REQUIRED_INPUTS.includes(inputId)) {
 
             return errorMessage;
         }
@@ -40,11 +26,11 @@ export class ValidationRules {
     /**
      * Check if an input is empty
      */
-    isEmpty(value) {
+    isFilled(value) {
 
-        return value == "" ||
+        return !(value == "" ||
             value == null ||
-            value == undefined
+            value == undefined);
     }
 
 
@@ -53,9 +39,9 @@ export class ValidationRules {
      * 
      * Correct values: M / W
      */
-    correctGender(value, constants, errorName) {
-        const genders = constants.VALID_GENDERS;
-        const errorMessage = constants.ERROR_MESSAGES[errorName];
+    correctGender(value, errorName, inputId) {
+        const genders = Constants.VALID_GENDERS;
+        const errorMessage = Constants.ERROR_MESSAGES[errorName];
 
         let isValidGender = genders.includes(value)
 
@@ -71,9 +57,9 @@ export class ValidationRules {
      * 
      * Correct values: A1, A2, B1, B2, C1, C2
      */
-    correctLanguageLevel(value, constants, errorName) {
-        const languageLevels = constants.LANGUAGE_LEVELS;
-        const errorMessage = constants.ERROR_MESSAGES[errorName];
+    correctLanguageLevel(value, errorName, inputId) {
+        const languageLevels = Constants.LANGUAGE_LEVELS;
+        const errorMessage = Constants.ERROR_MESSAGES[errorName];
 
         let isValidLanguageLevel = languageLevels.includes(value)
 
@@ -83,15 +69,15 @@ export class ValidationRules {
 
 
     }
-    
+
     /**
      * Check if the addres provided is a correct one
      * 
      * Correct values: Country, city, street n-23 1-1
      */
-    correctAddresFormat(value, constants, errorName) {
-        const streetFormatRegex = constants.IS_CORRECT_STREET;
-        const errorMessage = constants.ERROR_MESSAGES[errorName];
+    correctAddresFormat(value, errorName, inputId) {
+        const streetFormatRegex = Constants.IS_CORRECT_STREET;
+        const errorMessage = Constants.ERROR_MESSAGES[errorName];
 
         let isValidStreetFormat = streetFormatRegex.test(value)
 
@@ -107,9 +93,9 @@ export class ValidationRules {
      * 
      * Correct values: Visa / MasterCard
      */
-    correctCardType(value, constants, errorName) {
-        const correctCardTypes = constants.CARD_TYPE;
-        const errorMessage = constants.ERROR_MESSAGES[errorName];
+    correctCardType(value, errorName, inputId) {
+        const correctCardTypes = Constants.CARD_TYPE;
+        const errorMessage = Constants.ERROR_MESSAGES[errorName];
 
         let isValidCardType = correctCardTypes.includes(value)
 
@@ -125,9 +111,9 @@ export class ValidationRules {
      * 
      * Correct values format: 4111 1111 1111 1111 
      */
-    correctCardNumber(value, constants, errorName) {
-        const creditCardRegex = constants.IS_CREDIT_CARD_NUMBER;
-        const errorMessage = constants.ERROR_MESSAGES[errorName];
+    correctCardNumber(value, errorName, inputId) {
+        const creditCardRegex = Constants.IS_CREDIT_CARD_NUMBER;
+        const errorMessage = Constants.ERROR_MESSAGES[errorName];
 
         let isCorrectCreditCardNumber = creditCardRegex.test(value);
 
@@ -142,9 +128,9 @@ export class ValidationRules {
      * 
      * Correct values format: 111
      */
-    isCorrectCvc(value, constants, errorName) {
-        const regexCvc = constants.IS_CORRECT_CVC;
-        const errorMessage = constants.ERROR_MESSAGES[errorName];
+    isCorrectCvc(value, errorName, inputId) {
+        const regexCvc = Constants.IS_CORRECT_CVC;
+        const errorMessage = Constants.ERROR_MESSAGES[errorName];
 
         let isCorrectCvc = regexCvc.test(value);
 
@@ -154,13 +140,29 @@ export class ValidationRules {
     }
 
     /**
+     * Check if a cp is correct
+     * 
+     * Correct values format: 111
+     */
+    isCorrectCp(value, errorName, inputId) {
+        const regexCvc = Constants.IS_CORRECT_CP;
+        const errorMessage = Constants.ERROR_MESSAGES[errorName];
+
+        let isCorrectCp = regexCvc.test(value);
+
+        if (!isCorrectCp) {
+            return errorMessage;
+        }
+    }
+
+    /**
      * Check if a hexadeciaml color is correct format
      * 
      * Correct values format: #000 | #0000 | #000000 | #00000000
      */
-    isCorrectHexColor(value, constants, errorName) {
-        const regexHexColor = constants.IS_CORRECT_HEX_COLOR;
-        const errorMessage = constants.ERROR_MESSAGES[errorName];
+    isCorrectHexColor(value, errorName, inputId) {
+        const regexHexColor = Constants.IS_CORRECT_HEX_COLOR;
+        const errorMessage = Constants.ERROR_MESSAGES[errorName];
 
         let isCorrectHexColor = regexHexColor.test(value);
 
@@ -175,9 +177,9 @@ export class ValidationRules {
      * 
      * Correct values format: https.//www.twitter.com/[]
      */
-    isCorrectTwitterLink(value, constants, errorName) {
-        const regexTwitterLink = constants.IS_CORRECT_TWITTER_LINK;
-        const errorMessage = constants.ERROR_MESSAGES[errorName];
+    isCorrectTwitterLink(value, errorName, inputId) {
+        const regexTwitterLink = Constants.IS_CORRECT_TWITTER_LINK;
+        const errorMessage = Constants.ERROR_MESSAGES[errorName];
 
         let isCorrectTwitterLink = regexTwitterLink.test(value);
 
@@ -191,9 +193,9 @@ export class ValidationRules {
      * 
      * Correct values format: https.//www.facebook.com/[]
      */
-    isCorrectFacebookLink(value, constants, errorName) {
-        const regexFacebookLink = constants.IS_CORRECT_FACEBOOK_LINK;
-        const errorMessage = constants.ERROR_MESSAGES[errorName];
+    isCorrectFacebookLink(value, errorName, inputId) {
+        const regexFacebookLink = Constants.IS_CORRECT_FACEBOOK_LINK;
+        const errorMessage = Constants.ERROR_MESSAGES[errorName];
 
         let isCorrectFacebookLink = regexFacebookLink.test(value);
 
@@ -207,9 +209,9 @@ export class ValidationRules {
      * 
      * Correct values format: 12/23
      */
-    isCorrectExpirationDate(value, constants, errorName) {
-        const regexExpirationDate = constants.IS_EXPIRATION_DATE;
-        const errorMessage = constants.ERROR_MESSAGES[errorName];
+    isCorrectExpirationDate(value, errorName, inputId) {
+        const regexExpirationDate = Constants.IS_EXPIRATION_DATE;
+        const errorMessage = Constants.ERROR_MESSAGES[errorName];
 
         let isCorrectYear;
         let isCorrectExpirationDate = regexExpirationDate.test(value);
@@ -245,9 +247,9 @@ export class ValidationRules {
      * 
      * Correct values format: example@sample.com
      */
-    isCorrectEmail(value, constants, errorName) {
-        const regexEmail = constants.IS_EMAIL;
-        const errorMessage = constants.ERROR_MESSAGES[errorName];
+    isCorrectEmail(value, errorName, inputId) {
+        const regexEmail = Constants.IS_EMAIL;
+        const errorMessage = Constants.ERROR_MESSAGES[errorName];
 
         let isCorrectEmail = regexEmail.test(value);
 
@@ -261,13 +263,31 @@ export class ValidationRules {
      * 
      * Correct values format: 12121212G
      */
-    isDni(value, constants, errorName) {
-        const regexEmail = constants.IS_NIF;
-        const errorMessage = constants.ERROR_MESSAGES[errorName];
+    isDni(value, errorName, inputId) {
+        const regexEmail = Constants.IS_NIF;
+        const tableLetters = Constants.TABLE_LETTERS[0].split("");
+        const errorMessage = Constants.ERROR_MESSAGES[errorName];
 
-        let isCorrectNif = regexEmail.test(value) // && letter !== expectedLetter;
+        let isCorrectDni = regexEmail.test(value);
 
-        if (!isCorrectNif) {
+        if (isCorrectDni) {
+            // Split the value
+            let valueSplitted = value.split("");
+
+            // Get the letter and the number
+            let dniLetter = valueSplitted.at(-1);
+            let dniNumber = value.slice(0, valueSplitted.length);
+
+            // Calculate the position of the correct letter
+            dniNumber = parseInt(dniNumber) % tableLetters.length;
+
+            // Check if the letter is equal to the correct one
+            let correctLetter = tableLetters[dniNumber];
+            isCorrectDni = dniLetter.toUpperCase() == correctLetter.toUpperCase();
+
+        }
+
+        if (!isCorrectDni) {
             return errorMessage;
         }
     }
@@ -277,10 +297,10 @@ export class ValidationRules {
      * 
      * Correct valid values: Just S, C, V or D
      */
-    correctMaritalStatus(value, constants, errorName) {
+    correctMaritalStatus(value, errorName, inputId) {
 
-        const maritalStatus = constants.MARITAL_STATUS;
-        const errorMessage = constants.ERROR_MESSAGES[errorName];
+        const maritalStatus = Constants.MARITAL_STATUS;
+        const errorMessage = Constants.ERROR_MESSAGES[errorName];
 
         value = value.toUpperCase();
 
@@ -297,9 +317,9 @@ export class ValidationRules {
      * 
      * Correct valid: any number greater than 0
      */
-    isPositiveInteger(value, constants, errorName) {
-        const regexIsInteger = constants.IS_POSITIVE_INTEGER;
-        const errorMessage = constants.ERROR_MESSAGES[errorName];
+    isPositiveInteger(value, errorName, inputId) {
+        const regexIsInteger = Constants.IS_POSITIVE_INTEGER;
+        const errorMessage = Constants.ERROR_MESSAGES[errorName];
 
         let isDigitOnly = regexIsInteger.test(value);
 
@@ -316,9 +336,9 @@ export class ValidationRules {
      * Correct valid: anyword that has 8 length and just numbers and letters. One upper case, 
      * one lower case and number.
      */
-    isCorrectPassword(value, constants, errorName) {
-        const regexEmail = constants.IS_CORRECT_PASSWORD;
-        const errorMessage = constants.ERROR_MESSAGES[errorName];
+    isCorrectPassword(value, errorName, inputId) {
+        const regexEmail = Constants.IS_CORRECT_PASSWORD;
+        const errorMessage = Constants.ERROR_MESSAGES[errorName];
 
         let isAlphaNumeric = regexEmail.test(value);
 
@@ -332,9 +352,9 @@ export class ValidationRules {
      * 
      * Correct format value: DD/MM/YYYY 
      */
-    isValidDate(value, constants, errorName) {
-        const regexEmail = constants.IS_VALID_DATE;
-        const errorMessage = constants.ERROR_MESSAGES[errorName];
+    isValidDate(value, errorName, inputId) {
+        const regexEmail = Constants.IS_VALID_DATE;
+        const errorMessage = Constants.ERROR_MESSAGES[errorName];
 
         let isCorrectDate = regexEmail.test(value);
 
@@ -348,8 +368,8 @@ export class ValidationRules {
      * 
      * Correct valid values: every date that is lower than today
      */
-    isPreviousDate(value, constants, errorName) {
-        const errorMessage = constants.ERROR_MESSAGES[errorName];
+    isPreviousDate(value, errorName, inputId) {
+        const errorMessage = Constants.ERROR_MESSAGES[errorName];
 
         const [day, month, year] = value.split("/");
         const specifiedDate = new Date(year, month - 1, day);
@@ -366,9 +386,9 @@ export class ValidationRules {
      * 
      * Correct values: less or equal to 40
      */
-    lessThanLegalWorkHours(value, constants, errorName) {
-        const legalMaxHours = constants.LEGAL_MAX_WORK_HOURS
-        const errorMessage = constants.ERROR_MESSAGES[errorName];
+    lessThanLegalWorkHours(value, errorName, inputId) {
+        const legalMaxHours = Constants.LEGAL_MAX_WORK_HOURS
+        const errorMessage = Constants.ERROR_MESSAGES[errorName];
 
         if (value > legalMaxHours) {
             return errorMessage;
@@ -380,9 +400,9 @@ export class ValidationRules {
      * 
      * Correct values: +34 678 678 678
      */
-    isPhoneNumber(value, constants, errorName) {
-        const regexEmail = constants.IS_PHONE_NUMBER;
-        const errorMessage = constants.ERROR_MESSAGES[errorName];
+    isPhoneNumber(value, errorName, inputId) {
+        const regexEmail = Constants.IS_PHONE_NUMBER;
+        const errorMessage = Constants.ERROR_MESSAGES[errorName];
 
         let isCorrectPhoneNumber = regexEmail.test(value);
 
@@ -394,7 +414,7 @@ export class ValidationRules {
     /**
      * Validate the input using the custom validation rule
      */
-    validate(input) {
+    validate(input, inputId) {
         // Reset error messages
         input["errorMessages"] = [];
 
@@ -409,11 +429,9 @@ export class ValidationRules {
             let result;
 
             // We execute the validation rule
-            result = rule(inputValue, this.constants, rule.name);
+            result = rule(inputValue, rule.name, inputId);
 
-            // If an error occurrs, we add a new error message
-            if (rule.name == "isRequired") continue;
-            if (result && (rule.name == "mustBeFilled" || !this.isEmpty(inputValue))) {
+            if (result && (rule.name == "mustBeFilled" || this.isFilled(inputValue))) {
 
                 errorMessages.push(result);
                 return false;

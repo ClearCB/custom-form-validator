@@ -5,7 +5,6 @@ import { Languages } from "../models/Languages.js";
 import { PaymentMethod } from "../models/PaymentMethod.js";
 import { PersonalIdentification } from "../models/PersonalIdentification.js"
 
-
 export class FormModel {
     constructor() {
         this.personal = new PersonalIdentification();
@@ -15,6 +14,4 @@ export class FormModel {
         this.payment = new PaymentMethod();
         this.individual =  new IndividualPreferences();
     }
-
-
 }
