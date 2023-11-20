@@ -16,12 +16,12 @@ export class HtmlGenerator {
                     <label id="label_${inputId}" for="${inputId}">${inputName}</label>
                 </div>
             </div>
-            <div class="row">
+            <div class="row mt-2">
                 <div class="col">
                     <input type="text" id="${inputId}" />
                 </div>
             </div>
-            <div class="row">
+            <div class="row mt-2">
                 <div class="col">
                     <span id="validation_${inputId}"></span>
                 </div>
@@ -113,7 +113,7 @@ export class HtmlGenerator {
      */
     addNewColorInput(colorValue) {
         return `
-        <input type="color" value="${colorValue}" disabled>
+        <input style="height:50px; width:200px;" type="color" value="${colorValue}" disabled>
         `
         // <div class="row mt-2 d-flex justify-content-center align-items-center">
         // </div>
