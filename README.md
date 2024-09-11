@@ -1,4 +1,4 @@
-# Custom validator form vanilla javascript 
+# Custom validator form vanilla javascript
 
 In this repository you will find a vanilla javascript form validator. It was developed to acomplish a simple requirement to a class project.
 
@@ -6,7 +6,7 @@ In this repository you will find a vanilla javascript form validator. It was dev
 
 * Custom validation rules: the functions that will validate the values
 * Models: the models that will create the form structure
-* Functions: the functions that create the form 
+* Functions: the functions that create the form
 * Constants: all the information needed related to the validation rules
 
 ## Description
@@ -28,28 +28,28 @@ Each __input model__ has 5 parts:
 
 __IMPORTANT!__ the only file that will display information, is the [form model](./scripts/models/FormModel.js), and each section has it own objet. So if you want to make it work, just create a new object with their new inputs and it should appear new inputs rows.
 
-
 ## Constants
 
 At the constants file we have two differents parts:
 
 * Global information: the global information is something we want to store and be accesible from everywhere.
-* Data that will be used for the form "creator" to interact with the inputs to: add additional information, display error messages... 
-
+* Data that will be used for the form "creator" to interact with the inputs to: add additional information, display error messages...
 
 In this second part we have:
+
 * __ERROR_MESSAGES__ constant: this needs to have as a key a valid rule that will be found at the [validation rules](./scripts/utils/validationRules.js)  file, and as a value the message you want to be displayed.
 * __ADDITIONAL_INFORMATION_INPUT_RULE__ constant: this information is going to be added at the right of the label, to give the user more information like _(*)_ to mark an input as a required, this information is related to the custom validation rules, so they key must be a valid custom validation rule and the value the message.
 
 * __ADDITIONAL_INFORMATION_INPUT_TYPE__ constant: this information is going to be added at the right of the label, to give the user more information like _(dd/mm/yyyy)_ to mark the valid format of an input, this information is related to the name of the input, so they key must be a valid object atribute from one of the sections of the form and the value the message.
 
-* At the constants file we can find arrays with the values that an input should get, for example: 
+* At the constants file we can find arrays with the values that an input should get, for example:
 
 ```javascript
 LANGUAGE_LEVELS = ["A1", "A2", "B1", "B2", "C1", "C2"];
 ```
 
-* We can find also regex expressions that can be access from everywhere like: 
+* We can find also regex expressions that can be access from everywhere like:
+
 ```javascript
 IS_EMAIL = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;    
 ```
@@ -77,10 +77,9 @@ export class YourModel {
 }
 ```
 
-The first 2 params are free to get a value if you want something to have a default value. 
+The first 2 params are free to get a value if you want something to have a default value.
 
 At the 4th param you can add the custom rules. Remember that if you want a custom message that will be displayed if a validation is false, you must add a new property to the constant __ERROR_MESSAGES__
-
 
  Go to [form model](./scripts/models/FormModel.js) and add a new property that will be this new object you have just created. Now you should have the new input sections in your form.
 
